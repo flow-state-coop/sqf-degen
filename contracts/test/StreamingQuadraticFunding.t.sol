@@ -33,11 +33,11 @@ contract StreamingQuadraticFundingTesD is Test {
     address recipientId = makeAddr("recipient");
     address secondAllocator = makeAddr("second");
 
-    ISuperToken superToken = ISuperToken(0x0043d7c85C8b96a49A72A92C0B48CdC4720437d7);
-    address superTokenWhale = 0x1a8b3554089d97Ad8656eb91F34225bf97055C68;
+    ISuperToken superToken = ISuperToken(0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad);
+    address superTokenWhale = 0x4CC6674c365E8d8B15d7ddd6AC701E8FB6957d22;
 
     function setUp() public {
-        vm.createSelectFork({blockNumber: 10863728, urlOrAlias: "opsepolia"});
+        vm.createSelectFork({blockNumber: 7634248, urlOrAlias: "degen"});
 
         _streamingQuadraticFunding = new StreamingQuadraticFunding();
 
@@ -48,7 +48,7 @@ contract StreamingQuadraticFundingTesD is Test {
 
         vm.stopPrank();
 
-        superfluidHost = address(0xd399e2Fb5f4cf3722a11F65b88FAB6B2B8621005);
+        superfluidHost = address(0xc1314EdcD7e478C831a7a24169F7dEADB2646eD2);
         allocationSuperToken = address(superToken);
         poolSuperToken = address(superToken);
         recipientSuperAppFactory = address(new RecipientSuperAppFactory());
