@@ -42,7 +42,7 @@ contract RecipientSuperApp is SuperAppBase {
     error NotAcceptedSuperToken();
 
     address public recipient;
-    StreamingQuadraticFunding public immutable strategy;
+    StreamingQuadraticFunding public immutable streamingQuadraticFunding;
     ISuperToken public immutable acceptedToken;
 
     modifier onlyRecipient() {
@@ -50,13 +50,13 @@ contract RecipientSuperApp is SuperAppBase {
         _;
     }
 
-    constructor(address _recipient, address _strategy, address _host, ISuperToken _acceptedToken) {
+    constructor(address _recipient, address _streamingQuadraticFunding, address _host, ISuperToken _acceptedToken) {
         HOST = ISuperfluid(_host);
 
-        if (address(_strategy) == address(0)) {
+        if (address(_streamingQuadraticFunding) == address(0)) {
             revert ZERO_ADDRESS();
         }
-        strategy = StreamingQuadraticFunding(_strategy);
+        streamingQuadraticFunding = StreamingQuadraticFunding(_streamingQuadraticFunding);
         acceptedToken = _acceptedToken;
         recipient = _recipient;
     }
@@ -91,7 +91,7 @@ contract RecipientSuperApp is SuperAppBase {
         internal
         returns (bytes memory newCtx)
     {
-        strategy.adjustWeightings(uint256(int256(previousFlowRate)), uint256(int256(newFlowRate)));
+        streamingQuadraticFunding.adjustWeightings(uint256(int256(previousFlowRate)), uint256(int256(newFlowRate)));
         newCtx = _updateOutflow(ctx);
     }
 

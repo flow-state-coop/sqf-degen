@@ -42,7 +42,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
         RecipientSuperApp superApp;
     }
 
-    /// @notice Stores the details needed for initializing strategy
+    /// @notice Stores the details needed for initializing contract
     struct InitializeParams {
         address superfluidHost;
         address allocationSuperToken;
@@ -138,22 +138,22 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// ========= Initialize ==========
     /// ===============================
 
-    // @notice Initialize the strategy
-    /// @dev This will revert if the strategy is already initialized and 'msg.sender' is not the 'Allo' contract.
+    // @notice Initialize the contract
+    /// @dev This will revert if the contract is already initialized
     /// @param _data The data to be decoded
     function initialize(bytes memory _data) external onlyOwner {
         (InitializeParams memory params) = abi.decode(_data, (InitializeParams));
 
+        if (
+            params.superfluidHost == address(0) || params.allocationSuperToken == address(0)
+                || params.initialSuperAppBalance == 0 || address(gdaPool) != address(0)
+        ) revert INVALID();
+
         superfluidHost = params.superfluidHost;
         recipientSuperAppFactory = RecipientSuperAppFactory(params.recipientSuperAppFactory);
-
-        if (params.initialSuperAppBalance == 0) revert INVALID();
-
         allocationSuperToken = ISuperToken(params.allocationSuperToken);
         poolSuperToken = ISuperToken(params.poolSuperToken);
-
         initialSuperAppBalance = params.initialSuperAppBalance;
-
         gdaPool = SuperTokenV1Library.createPool(
             poolSuperToken,
             address(this), // pool admin
@@ -180,23 +180,28 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
             revert INVALID_METADATA();
         }
 
-        if (_recipientAddress == address(0)) revert RECIPIENT_ERROR(_recipientAddress);
+        if (_recipientAddress == address(0)) {
+            revert RECIPIENT_ERROR(_recipientAddress);
+        }
 
         Recipient storage recipient = recipients[_recipientAddress];
 
         recipient.recipientAddress = _recipientAddress;
         recipient.metadata = _metadata;
-        RecipientSuperApp superApp = recipientSuperAppFactory.createRecipientSuperApp(
-            recipient.recipientAddress, address(this), superfluidHost, allocationSuperToken, true, true, true
-        );
 
-        allocationSuperToken.transfer(address(superApp), initialSuperAppBalance);
+        if (superApps[_recipientAddress] == address(0)) {
+            RecipientSuperApp superApp = recipientSuperAppFactory.createRecipientSuperApp(
+                recipient.recipientAddress, address(this), superfluidHost, allocationSuperToken, true, true, true
+            );
 
-        // Add recipientAddress as member of the GDA with 1 unit
-        _updateMemberUnits(_recipientAddress, recipient.recipientAddress, 1);
+            allocationSuperToken.transfer(address(superApp), initialSuperAppBalance);
 
-        superApps[address(superApp)] = _recipientAddress;
-        recipient.superApp = superApp;
+            // Add recipientAddress as member of the GDA with 1 unit
+            _updateMemberUnits(_recipientAddress, recipient.recipientAddress, 1);
+
+            superApps[address(superApp)] = _recipientAddress;
+            recipient.superApp = superApp;
+        }
     }
 
     /// @notice Adjust the weightings of the recipients

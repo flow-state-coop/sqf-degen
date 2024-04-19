@@ -11,7 +11,7 @@ import "./RecipientSuperApp.sol";
 contract RecipientSuperAppFactory {
     function createRecipientSuperApp(
         address _recipient,
-        address _strategy,
+        address _streamingQuadraticFunding,
         address _host,
         ISuperToken _acceptedToken,
         bool _activateOnCreated,
@@ -37,7 +37,7 @@ contract RecipientSuperAppFactory {
                 | SuperAppDefinitions.AFTER_AGREEMENT_TERMINATED_NOOP;
         }
 
-        recipientSuperApp = new RecipientSuperApp(_recipient, _strategy, _host, _acceptedToken);
+        recipientSuperApp = new RecipientSuperApp(_recipient, _streamingQuadraticFunding, _host, _acceptedToken);
 
         host.registerApp(recipientSuperApp, callBackDefinitions);
     }
