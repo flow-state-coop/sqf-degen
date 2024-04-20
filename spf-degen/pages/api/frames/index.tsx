@@ -5,7 +5,7 @@ import { frames } from "./frames";
 const handleRequest = frames(async (ctx) => {
   return {
     image: (
-      <span tw='flex flex-col'>
+      <span tw='flex flex-col px-10'>
         <h3>Streaming QF- Degen Builders Round</h3>
         <h1>Grant Name</h1>
         <p>
