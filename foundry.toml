@@ -3,6 +3,7 @@ src = "contracts/src"
 out = "contracts/out"
 libs = ["contracts/lib"]
 test = 'contracts/test'
+broadcast = 'contracts/broadcast'
 cache_path = 'contracts/cache'
 optimizer = true
 optimizer-runs = 1_000
