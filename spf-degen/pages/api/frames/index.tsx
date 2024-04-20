@@ -15,12 +15,14 @@ const handleRequest = frames(async (ctx) => {
       </span>
     ),
     buttons: [
-      <Button action='post'>Click me</Button>,
+      <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
+        SQF Round Deatils
+      </Button>,
       <Button action='post' target='/next'>
-        Next frame
+        Check the Multiplier
       </Button>,
     ],
-    textInput: "Type something!",
+    // textInput: "Type something!",
   };
 });
 
