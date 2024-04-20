@@ -5,13 +5,21 @@ import { frames } from "../frames";
 const handleRequest = frames(async (ctx) => {
   return {
     image: (
-      <span>
-        This is next frame and you clicked button:{" "}
-        {ctx.pressedButton ? "✅" : "❌"}
-      </span>
+      <>
+        <span>
+          <h3>Streaming QF- Degen Builders Round</h3>
+          <h1>Grant Name</h1>
+          <p>
+            Open a $DEGEN donation stream that's matched with quadratic funding.
+          </p>
+          <p>
+            The more DEGENS that donate, the higher the matching multiplier!
+          </p>
+        </span>
+      </>
     ),
     buttons: [
-      <Button action="post" target="/">
+      <Button action='post' target='/'>
         Previous frame
       </Button>,
     ],
