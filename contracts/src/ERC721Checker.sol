@@ -12,6 +12,6 @@ contract ERC721Checker is IChecker {
     }
 
     function isValidAllocator(address _allocator) external view override returns (bool) {
-        return IERC721(_allocator).balanceOf(address(this)) > 0;
+        return erc721.balanceOf(_allocator) > 0;
     }
 }
