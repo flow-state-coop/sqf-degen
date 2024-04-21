@@ -175,7 +175,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice Register Recipient to the pool
     /// @param _recipientAddress The data to be decoded
     /// @param _metadata The metadata of the recipient
-    function registerRecipient(address _recipientAddress, Metadata memory _metadata) external onlyOwner {
+    function registerRecipient(address _recipientAddress, Metadata memory _metadata, address _checker) external onlyOwner {
         if ((bytes(_metadata.pointer).length == 0 || _metadata.protocol == 0)) {
             revert INVALID_METADATA();
         }
@@ -191,7 +191,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
         if (superApps[_recipientAddress] == address(0)) {
             RecipientSuperApp superApp = recipientSuperAppFactory.createRecipientSuperApp(
-                recipient.recipientAddress, address(this), superfluidHost, allocationSuperToken, true, true, true
+                recipient.recipientAddress, address(this), superfluidHost, allocationSuperToken, true, true, true, _checker
             );
 
             allocationSuperToken.transfer(address(superApp), initialSuperAppBalance);

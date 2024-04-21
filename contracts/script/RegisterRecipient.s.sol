@@ -18,7 +18,7 @@ contract RegisterRecipient is Script {
         address recipientAddress = 0x0000000000000000000000000000000000000000;
 
         superToken.transfer(address(streamingQuadraticFunding), 1e8);
-        streamingQuadraticFunding.registerRecipient(recipientAddress, StreamingQuadraticFunding.Metadata(1, "ipfs://"));
+        streamingQuadraticFunding.registerRecipient(recipientAddress, StreamingQuadraticFunding.Metadata(1, "ipfs://"), address(0));
 
         vm.stopBroadcast();
     }

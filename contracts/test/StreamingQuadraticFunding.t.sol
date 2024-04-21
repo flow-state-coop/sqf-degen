@@ -62,7 +62,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_registerRecipient() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
 
         StreamingQuadraticFunding.Recipient memory recipient = _streamingQuadraticFunding.getRecipient(recipientId);
 
@@ -79,11 +79,11 @@ contract StreamingQuadraticFundingTesD is Test {
         vm.prank(secondAllocator);
         vm.expectRevert(StreamingQuadraticFunding.UNAUTHORIZED.selector);
 
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
     }
 
     function test_createFlow() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
         superToken.distributeFlow(address(this), _streamingQuadraticFunding.gdaPool(), 1e9);
         address superApp = address(_streamingQuadraticFunding.getSuperApp(recipientId));
 
@@ -99,7 +99,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_updateFlow() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
         address superApp = address(_streamingQuadraticFunding.getSuperApp(recipientId));
 
         superToken.createFlow(superApp, 420 * 1e8);
@@ -116,7 +116,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_deleteFlow() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
         address superApp = address(_streamingQuadraticFunding.getSuperApp(recipientId));
 
         superToken.createFlow(superApp, 420 * 1e8);
@@ -133,7 +133,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_deleteFlow_multiple_times() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
         address superApp = address(_streamingQuadraticFunding.getSuperApp(recipientId));
 
         superToken.createFlow(superApp, 420 * 1e8);
@@ -164,7 +164,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_superAppEmergencyWithdraw() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
         StreamingQuadraticFunding.Recipient memory recipient = _streamingQuadraticFunding.getRecipient(recipientId);
 
         vm.prank(superTokenWhale);
@@ -184,7 +184,7 @@ contract StreamingQuadraticFundingTesD is Test {
     }
 
     function test_superAppEmergencyWithdraw_unauthorized() public {
-        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"));
+        _streamingQuadraticFunding.registerRecipient(recipientId, StreamingQuadraticFunding.Metadata(1, "test"), address(0));
 
         StreamingQuadraticFunding.Recipient memory recipient = _streamingQuadraticFunding.getRecipient(recipientId);
 

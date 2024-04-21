@@ -16,7 +16,8 @@ contract RecipientSuperAppFactory {
         ISuperToken _acceptedToken,
         bool _activateOnCreated,
         bool _activateOnUpdated,
-        bool _activateOnDeleted
+        bool _activateOnDeleted,
+        address _checker
     ) public returns (RecipientSuperApp recipientSuperApp) {
         ISuperfluid host = ISuperfluid(_host);
 
@@ -37,7 +38,7 @@ contract RecipientSuperAppFactory {
                 | SuperAppDefinitions.AFTER_AGREEMENT_TERMINATED_NOOP;
         }
 
-        recipientSuperApp = new RecipientSuperApp(_recipient, _streamingQuadraticFunding, _host, _acceptedToken);
+        recipientSuperApp = new RecipientSuperApp(_recipient, _streamingQuadraticFunding, _host, _acceptedToken, _checker);
 
         host.registerApp(recipientSuperApp, callBackDefinitions);
     }
