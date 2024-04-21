@@ -19,7 +19,7 @@ RPC_URL=your_rpc_url
 
 Install _Node Version 18_ if you don't have it but stay within LTS.
 
-Use yarn to download and install all your dependencies
+Use pnpm to download and install all your dependencies
 
 ```
 pnpm install

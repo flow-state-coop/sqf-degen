@@ -389,11 +389,7 @@ export default function EditStream(props: EditStreamProps) {
                   Degen Chain
                 </Badge>
                 <Badge className="d-flex align-items-center gap-1 bg-purple w-50 rounded-3 px-3 py-2 fs-4 fw-normal">
-                  <Image
-                    src={superTokenIcon}
-                    alt="degenchain"
-                    width={isFundingMatchingPool ? 12 : 18}
-                  />
+                  <Image src={superTokenIcon} alt="degenchain" width={18} />
                   {superTokenSymbol}
                 </Badge>
               </Stack>
@@ -1095,7 +1091,7 @@ export default function EditStream(props: EditStreamProps) {
                         recipientsDetails[granteeIndex].social
                       )
                     : ""
-                }%20in%20the%20%23streamingqf%20on%Degen%Chain%20%0A%0AJoin%20me%20in%20making%20public%20goods%20funding%20history%20by%20donating%20in%20the%20world%27s%20first%20SQF%20round%21`}
+                }%20in%20the%20%23streamingqf%20round%20on%20Degen%20Chain%3A%0A%0Ahttps%3A%2F%2Fstreaming.fund%0A%0AJoin%20me%20in%20making%20public%20goods%20funding%20history%20by%20donating%20in%20the%20world%27s%20first%20SQF%20round%21`}
                 data-size="large"
               >
                 <Image src={XIcon} alt="x social" width={28} height={22} />
@@ -1107,7 +1103,7 @@ export default function EditStream(props: EditStreamProps) {
                 target="_blank"
                 href={`https://warpcast.com/~/compose?text=I+just+opened+a+contribution+stream+to+${
                   isFundingMatchingPool ? "the SQF Matching Pool" : granteeName
-                }+in+the+%23streamingqf+pilot+round+on+degen+chain+%0A%0AJoin+me+in+making+public+goods+funding+history+by+donating+in+the+world's+first+SQF+round%21`}
+                }+in+the+%23streamingqf+round+on+Degen+Chain%3A+%0A%0Ahttps%3A%2F%2Fstreaming.fund+%0A%0AJoin+me+in+making+public+goods+funding+history+by+donating+in+the+world's+first+SQF+round%21`}
               >
                 <Image
                   src={FarcasterIcon}
@@ -1123,7 +1119,7 @@ export default function EditStream(props: EditStreamProps) {
                 target="_blank"
                 href={`https://hey.xyz/?text=I+just+opened+a+contribution+stream+to+${
                   isFundingMatchingPool ? "the SQF Matching Pool" : granteeName
-                }+in+the+%23streamingqf+pilot+round+presented+by+Geo+Web%2C+%40gitcoin%2C+%26+%40superfluid%3A+%0A%0Ahttps%3A%2F%2Fstreaming.fund+%0A%0AJoin+me+in+making+public+goods+funding+history+by+donating+in+the+world%27s+first+SQF+round%21`}
+                }+in+the+%23streamingqf+round+on+Degen+Chain%3A+%0A%0Ahttps%3A%2F%2Fstreaming.fund+%0A%0AJoin+me+in+making+public+goods+funding+history+by+donating+in+the+world%27s+first+SQF+round%21`}
               >
                 <Image src={LensIcon} alt="lens" width={28} height={22} />
                 <span style={{ fontSize: "10px" }}>Post on Lens</span>

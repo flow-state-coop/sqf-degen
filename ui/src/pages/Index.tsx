@@ -116,9 +116,13 @@ export default function StreamingQuadraticFunding() {
             <Card.Text className="text-white fs-4 mb-1">
               A quadratic funding round every second
             </Card.Text>
-            <Card.Text className="text-info fs-5 mb-0">
-              Beta Run - February 21 - April 21, 2024
-            </Card.Text>
+            <Card.Link
+              href="https://wtfisqf.com/"
+              target="_blank"
+              className="text-info fs-5 mb-0"
+            >
+              Learn More about QF
+            </Card.Link>
           </Stack>
           {isMobile && (
             <Stack

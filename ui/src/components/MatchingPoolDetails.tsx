@@ -130,7 +130,7 @@ export default function MatchingPoolDetails(props: MatchingPoolDetailsProps) {
         </Button>
         <Button
           variant="link"
-          href="https://twitter.com/streamingfunding"
+          href="https://twitter.com/streamingfund"
           target="_blank"
           rel="noreferrer"
           className="ms-1 p-0"

@@ -73,7 +73,7 @@ const connectors = connectorsForWallets([
       metaMaskWallet({ chains, projectId: WALLET_CONNECT_PROJECT_ID }),
       ledgerWallet({ chains, projectId: WALLET_CONNECT_PROJECT_ID }),
       walletConnectWallet({ chains, projectId: WALLET_CONNECT_PROJECT_ID }),
-      coinbaseWallet({ appName: "Geo Web Cadastre", chains }),
+      coinbaseWallet({ appName: "Streaming Quadratic Funding", chains }),
       braveWallet({ chains }),
     ],
   },

@@ -6,7 +6,7 @@ import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
 import DegenWhite from "../assets/degen-white.svg";
 import DegenDark from "../assets/degen-dark.svg";
-import DegenLight from "../assets/degen-light.svg";
+import DegenSlate from "../assets/degen-slate.svg";
 import ContributionsIcon from "../assets/contributions.svg";
 import HandIcon from "../assets/hand.svg";
 import { VisualizationProps, Dimensions } from "./Visualization";
@@ -454,7 +454,7 @@ export default function FundingSources(props: FundingSourcesProps) {
                   <Card.Img
                     variant="start"
                     className="pe-1"
-                    src={DegenLight}
+                    src={DegenSlate}
                     width={24}
                   />
                   <Card.Text className="mb-0">

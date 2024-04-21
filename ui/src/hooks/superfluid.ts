@@ -18,15 +18,19 @@ export default function useSuperfluid(accountAddress?: string) {
   const host = new Host(SUPERFLUID_HOST_ADDRESS);
 
   const wrap = async (flowRate: string) => {
-    if (!accountAddress || !signer) {
-      throw Error("Could not find the account address");
+    if (!signer) {
+      throw Error("Could not find the signer");
     }
 
     const superToken = new ethers.Contract(
       DEGENX_ADDRESS,
       new ethers.utils.Interface(["function upgradeByETH() payable"])
     );
-    await superToken.connect(signer).upgradeByETH({ value: flowRate });
+    const tx = await superToken
+      .connect(signer)
+      .upgradeByETH({ value: flowRate });
+
+    await tx.wait();
   };
 
   const editFlow = (
