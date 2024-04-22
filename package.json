@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "frames.js": "^0.14.0"
+    "frames.js": "^0.14.0",
+    "viem": "^2.9.23"
   }
 }

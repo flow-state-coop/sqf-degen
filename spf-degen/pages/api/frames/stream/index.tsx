@@ -1,8 +1,14 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next/pages-router/server";
 import { frames } from "../frames";
+import { client } from "../../../../client/client";
 
 const handleRequest = frames(async (ctx) => {
+  // const contractData = await client.readContract({
+  //   address: "0xYourContractAddress",
+  //   abi: SQFABI,
+  //   functionName: "getDetails",
+  // });
   return {
     image: (
       <>
