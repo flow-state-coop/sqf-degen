@@ -3,30 +3,27 @@ import { Button } from "frames.js/next";
 import { frames } from "./frames";
 
 const frameHandler = frames(async (ctx) => {
-  const counter = ctx.message ? ctx.searchParams.op === "+" ? ctx.state.counter + 1 : ctx.state.counter - 1 : ctx.state.counter
-
   return {
-    image: <div tw="flex flex-col">
-      <div tw="flex">frames.js starter</div>
-      {ctx.message?.inputText && <div tw="flex">
-      {`Input: ${ctx.message.inputText}`}
-      </div>}
-      <div tw="flex">Counter {counter}</div></div>,
-    textInput: "Say something",
+    image: (
+      <span tw='flex flex-col px-10'>
+        <h3>Streaming QF- Degen Builders Round</h3>
+        <h1>Grant Name</h1>
+        <p>
+          Open a $DEGEN donation stream that's matched with quadratic funding.
+        </p>
+        <p>The more DEGENS that donate, the higher the matching multiplier!</p>
+      </span>
+    ),
     buttons: [
-      <Button action="post" target={{pathname: "/", query: {op: "+"}}}>
-        Increment
+      <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
+        SQF Round Deatils
       </Button>,
-      <Button action="post" target={{pathname: "/", query: {op: "-"}}}>
-        Decrement
-      </Button >,
-      <Button action="link" target={`https://www.google.com`}>
-        External
-      </Button>
+      <Button action='post' target='/stream'>
+        Check the Multiplier
+      </Button>,
     ],
-    state: { counter: counter}
-  }
-})
+  };
+});
 
 export const GET = frameHandler;
 export const POST = frameHandler;
