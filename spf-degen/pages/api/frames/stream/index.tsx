@@ -4,15 +4,10 @@ import { frames } from "../frames";
 import { client } from "../../../../client/client";
 
 const handleRequest = frames(async (ctx) => {
-  // const contractData = await client.readContract({
-  //   address: "0xYourContractAddress",
-  //   abi: SQFABI,
-  //   functionName: "getDetails",
-  // });
   return {
     image: (
       <>
-        <span>
+        <span tw='flex flex-col px-10'>
           <h3>Streaming QF- Degen Builders Round</h3>
           <h1>Grant Name</h1>
           <p>
@@ -27,6 +22,9 @@ const handleRequest = frames(async (ctx) => {
     buttons: [
       <Button action='post' target='/'>
         Previous frame
+      </Button>,
+      <Button action='tx' target='/wrapDegen'>
+        Wrap to DegenX
       </Button>,
     ],
   };
