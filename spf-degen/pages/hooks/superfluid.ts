@@ -74,14 +74,10 @@ export default function useSuperfluid(accountAddress?: string) {
   };
 
   const gdaGetFlowRate = async (
+    account: Address,
     superTokenAddress: Address,
     gdaPool: Address
   ) => {
-    if (!signer?.getAddress()) {
-      throw Error("Could not find the signer");
-    }
-    const account = `0x${await signer.getAddress()}` as `0x${string}`;
-
     const getFlowRateData = encodeFunctionData({
       abi: gdaAbi,
       functionName: "getFlowRate",

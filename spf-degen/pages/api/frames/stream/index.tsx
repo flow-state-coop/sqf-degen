@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-key */
 import { Button } from "frames.js/next/pages-router/server";
 import { frames } from "../frames";
-import { client } from "../../../../client/client";
 
 const handleRequest = frames(async (ctx) => {
   return {
@@ -23,7 +22,7 @@ const handleRequest = frames(async (ctx) => {
       <Button action='post' target='/'>
         Previous frame
       </Button>,
-      <Button action='tx' target='/wrapDegen'>
+      <Button action='tx' target='/stream/wrapDegen' post_url='/stream/success'>
         Wrap to DegenX
       </Button>,
     ],
