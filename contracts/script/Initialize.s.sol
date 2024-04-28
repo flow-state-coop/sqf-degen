@@ -18,10 +18,11 @@ contract Initialize is Script {
         address poolSuperToken = 0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad;
         address recipientSuperAppFactory = address(0x062a0AbeB052392005a49a0a4339d1aD4129C8EC);
         uint256 initialSuperAppBalance = 1e8;
+        address checker = address(0); // TODO: set this to the address of the ERC721Checker
 
         streamingQuadraticFunding.initialize(
             abi.encode(
-                superfluidHost, allocationSuperToken, poolSuperToken, recipientSuperAppFactory, initialSuperAppBalance
+                superfluidHost, allocationSuperToken, poolSuperToken, recipientSuperAppFactory, initialSuperAppBalance, checker
             )
         );
 
