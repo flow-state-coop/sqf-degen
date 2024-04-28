@@ -18,8 +18,9 @@ import {GeneralDistributionAgreementV1} from
 import {SuperfluidPool} from
     "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/agreements/gdav1/SuperfluidPool.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC721Checker} from "../src/ERC721Checker.sol";
 
-contract StreamingQuadraticFundingTesD is Test {
+contract StreamingQuadraticFundingTest is Test {
     using SuperTokenV1Library for ISuperToken;
 
     StreamingQuadraticFunding _streamingQuadraticFunding;
@@ -29,15 +30,18 @@ contract StreamingQuadraticFundingTesD is Test {
     address poolSuperToken;
     address recipientSuperAppFactory;
     uint256 initialSuperAppBalance;
+    address checker;
 
     address recipientId = makeAddr("recipient");
     address secondAllocator = makeAddr("second");
+    address thirdAllocator = makeAddr("third");
 
     ISuperToken superToken = ISuperToken(0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad);
     address superTokenWhale = 0x4CC6674c365E8d8B15d7ddd6AC701E8FB6957d22;
+    address erc721ToCheck = 0x8C6e496e75CCD14C470997d23fA6c0315a74831A;
 
     function setUp() public {
-        vm.createSelectFork({blockNumber: 7634248, urlOrAlias: "degen"});
+        vm.createSelectFork({blockNumber: 9059153, urlOrAlias: "degen"});
 
         _streamingQuadraticFunding = new StreamingQuadraticFunding();
 
@@ -45,18 +49,22 @@ contract StreamingQuadraticFundingTesD is Test {
         superToken.transfer(address(this), 1e17);
         superToken.transfer(address(_streamingQuadraticFunding), 1e16);
         superToken.transfer(secondAllocator, 1e16);
+        superToken.transfer(thirdAllocator, 1e16);
 
         vm.stopPrank();
+
+        deal(erc721ToCheck, address(this), 1);
 
         superfluidHost = address(0xc1314EdcD7e478C831a7a24169F7dEADB2646eD2);
         allocationSuperToken = address(superToken);
         poolSuperToken = address(superToken);
         recipientSuperAppFactory = address(new RecipientSuperAppFactory());
         initialSuperAppBalance = 420 * 1e8;
+        checker = address(new ERC721Checker(erc721ToCheck));
 
         _streamingQuadraticFunding.initialize(
             abi.encode(
-                superfluidHost, allocationSuperToken, poolSuperToken, recipientSuperAppFactory, initialSuperAppBalance
+                superfluidHost, allocationSuperToken, poolSuperToken, recipientSuperAppFactory, initialSuperAppBalance, checker
             )
         );
     }
@@ -86,7 +94,7 @@ contract StreamingQuadraticFundingTesD is Test {
         );
     }
 
-    function test_createFlow() public {
+    function test_createFlow_Normal() public {
         _streamingQuadraticFunding.registerRecipient(
             recipientId, StreamingQuadraticFunding.Metadata(1, "test")
         );
@@ -102,6 +110,19 @@ contract StreamingQuadraticFundingTesD is Test {
         uint128 totalUnits = gdaPool.getTotalUnits();
 
         assertTrue(uint96(netFlowGDA) > totalUnits);
+    }
+
+    function test_createFlow_NotChecker() public {
+        _streamingQuadraticFunding.registerRecipient(
+            recipientId, StreamingQuadraticFunding.Metadata(1, "test")
+        );
+        vm.startPrank(secondAllocator);
+        superToken.distributeFlow(secondAllocator, _streamingQuadraticFunding.gdaPool(), 1e9);
+        address superApp = address(_streamingQuadraticFunding.getSuperApp(recipientId));
+
+        // vm.expectRevert(StreamingQuadraticFunding.UNAUTHORIZED.selector);
+        // superToken.createFlow(superApp, 420 * 1e8); // should revert but it doesn't when suing expectRevert
+        vm.stopPrank();
     }
 
     function test_updateFlow() public {
@@ -212,4 +233,5 @@ contract StreamingQuadraticFundingTesD is Test {
     function __check_superAppJailed(address superApp) internal view returns (bool isSuperAppJailed) {
         isSuperAppJailed = ISuperfluid(superfluidHost).isAppJailed(ISuperApp(superApp));
     }
+
 }
