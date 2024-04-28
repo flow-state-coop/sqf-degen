@@ -10,7 +10,8 @@ contract Initialize is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        StreamingQuadraticFunding streamingQuadraticFunding = StreamingQuadraticFunding(0x533ed7bC8d5924d41D8b3a0ff0B45deAf2C7092d);
+        StreamingQuadraticFunding streamingQuadraticFunding =
+            StreamingQuadraticFunding(0x533ed7bC8d5924d41D8b3a0ff0B45deAf2C7092d);
 
         address superfluidHost = 0xc1314EdcD7e478C831a7a24169F7dEADB2646eD2;
         address allocationSuperToken = 0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad;

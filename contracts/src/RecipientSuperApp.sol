@@ -52,7 +52,12 @@ contract RecipientSuperApp is SuperAppBase {
         _;
     }
 
-    constructor(address _recipient, address _streamingQuadraticFunding, address _host, ISuperToken _acceptedToken, address _checker) {
+    constructor(
+        address _recipient,
+        address _streamingQuadraticFunding,
+        address _host,
+        ISuperToken _acceptedToken
+    ) {
         HOST = ISuperfluid(_host);
 
         if (address(_streamingQuadraticFunding) == address(0)) {
@@ -61,7 +66,7 @@ contract RecipientSuperApp is SuperAppBase {
         streamingQuadraticFunding = StreamingQuadraticFunding(_streamingQuadraticFunding);
         acceptedToken = _acceptedToken;
         recipient = _recipient;
-        checker = _checker;
+        checker = streamingQuadraticFunding.checker();
     }
 
     /// @notice Withdraw ERC20 funds in an emergency

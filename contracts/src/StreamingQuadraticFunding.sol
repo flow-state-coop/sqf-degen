@@ -49,6 +49,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
         address poolSuperToken;
         address recipientSuperAppFactory;
         uint256 initialSuperAppBalance;
+        address checker;
     }
 
     /// ==========================
@@ -89,6 +90,8 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice The pool super token
     ISuperToken public allocationSuperToken;
     ISuperToken public poolSuperToken;
+    /// @notice The contract that checks the recipient
+    address public checker;
 
     /// @notice The recipient SuperApp factory
     RecipientSuperAppFactory public recipientSuperAppFactory;
@@ -149,6 +152,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
                 || params.initialSuperAppBalance == 0 || address(gdaPool) != address(0)
         ) revert INVALID();
 
+        checker = params.checker;
         superfluidHost = params.superfluidHost;
         recipientSuperAppFactory = RecipientSuperAppFactory(params.recipientSuperAppFactory);
         allocationSuperToken = ISuperToken(params.allocationSuperToken);
@@ -175,7 +179,10 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice Register Recipient to the pool
     /// @param _recipientAddress The data to be decoded
     /// @param _metadata The metadata of the recipient
-    function registerRecipient(address _recipientAddress, Metadata memory _metadata, address _checker) external onlyOwner {
+    function registerRecipient(address _recipientAddress, Metadata memory _metadata)
+        external
+        onlyOwner
+    {
         if ((bytes(_metadata.pointer).length == 0 || _metadata.protocol == 0)) {
             revert INVALID_METADATA();
         }
@@ -191,7 +198,13 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
         if (superApps[_recipientAddress] == address(0)) {
             RecipientSuperApp superApp = recipientSuperAppFactory.createRecipientSuperApp(
-                recipient.recipientAddress, address(this), superfluidHost, allocationSuperToken, true, true, true, _checker
+                recipient.recipientAddress,
+                address(this),
+                superfluidHost,
+                allocationSuperToken,
+                true,
+                true,
+                true
             );
 
             allocationSuperToken.transfer(address(superApp), initialSuperAppBalance);
