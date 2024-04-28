@@ -12,7 +12,7 @@ contract DeployChecker is Script {
         address ERC721 = 0x8C6e496e75CCD14C470997d23fA6c0315a74831A;
 
         ERC721Checker checker = new ERC721Checker(ERC721);
-        console.log("Deployed checker at", address(checker));
+        console2.log("Deployed checker at", address(checker));
 
         vm.stopBroadcast();
     }
