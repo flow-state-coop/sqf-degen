@@ -37,7 +37,8 @@ contract RecipientSuperAppFactory {
                 | SuperAppDefinitions.AFTER_AGREEMENT_TERMINATED_NOOP;
         }
 
-        recipientSuperApp = new RecipientSuperApp(_recipient, _streamingQuadraticFunding, _host, _acceptedToken);
+        recipientSuperApp =
+            new RecipientSuperApp(_recipient, _streamingQuadraticFunding, _host, _acceptedToken);
 
         host.registerApp(recipientSuperApp, callBackDefinitions);
     }
