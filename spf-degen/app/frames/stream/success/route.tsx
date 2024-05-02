@@ -13,7 +13,7 @@ const handleRequest = frames(async (ctx) => {
     ),
     buttons: [
       <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
-        SQF Round Deatils
+        SQF Round Details
       </Button>,
     ],
   };

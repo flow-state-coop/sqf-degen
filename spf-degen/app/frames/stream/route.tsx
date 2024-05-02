@@ -22,10 +22,10 @@ const handleRequest = frames(async (ctx) => {
       <Button action='post' target='/'>
         Previous frame
       </Button>,
-      <Button action='tx' target='/stream/wrapDegen'>
+      <Button action='tx' target='/stream/wrapDegen' post_url='/stream/'>
         Wrap to DegenX
       </Button>,
-      <Button action='tx' target='/stream/wrapDegen' post_url='/stream/success'>
+      <Button action='tx' target='/stream/donate' post_url='/stream/success'>
         Donate
       </Button>,
     ],
