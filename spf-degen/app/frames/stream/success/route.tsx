@@ -19,4 +19,5 @@ const handleRequest = frames(async (ctx) => {
   };
 });
 
-export default handleRequest;
+export const GET = handleRequest;
+export const POST = handleRequest;
