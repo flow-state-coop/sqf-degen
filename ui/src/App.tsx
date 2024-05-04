@@ -28,12 +28,16 @@ import ErrorPage from "./pages/Error";
 import Header from "./components/Header";
 import { StreamingQuadraticFundingContextProvider } from "./context/StreamingQuadraticFunding";
 import SuperfluidContextProvider from "./context/Superfluid";
-import { RPC_URL, WALLET_CONNECT_PROJECT_ID } from "./lib/constants";
+import {
+  RPC_URL,
+  WALLET_CONNECT_PROJECT_ID,
+  NETWORK_ID,
+} from "./lib/constants";
 import "@rainbow-me/rainbowkit/styles.css";
 import "./styles.scss";
 
 const degenChain = {
-  id: 666666666,
+  id: NETWORK_ID,
   name: "Degen",
   network: "degenchain",
   iconUrl: "https://explorer.degen.tips/favicon/favicon-32x32.png",

@@ -76,7 +76,6 @@ type TransactionDetailsSnapshot = {
 export enum Step {
   SELECT_AMOUNT = "Edit stream",
   WRAP = "Wrap to Super Token",
-  TOP_UP = "Top up required tokens",
   REVIEW = "Review",
   SUCCESS = "Success!",
 }
@@ -125,12 +124,6 @@ export default function EditStream(props: EditStreamProps) {
     staleTime: 10000,
     watch: true,
   });
-  const { data: degenBalance } = useBalance({
-    address,
-    cacheTime: 10000,
-    staleTime: 10000,
-    watch: true,
-  });
   const {
     areTransactionsLoading,
     completedTransactions,
@@ -138,20 +131,6 @@ export default function EditStream(props: EditStreamProps) {
     executeTransactions,
   } = useTransactionsQueue();
 
-  const minDegenBalance = 0.001;
-  const suggestedTokenBalance = newFlowRate
-    ? BigInt(newFlowRate) *
-      BigInt(fromTimeUnitsToSeconds(1, unitOfTime[TimeInterval.MONTH])) *
-      BigInt(2)
-    : BigInt(0);
-  const hasSufficientDegenBalance =
-    degenBalance && degenBalance.value > parseEther(minDegenBalance.toString());
-  const hasSuggestedTokenBalance =
-    underlyingTokenBalance &&
-    (underlyingTokenBalance.value > suggestedTokenBalance ||
-      superTokenBalance > suggestedTokenBalance)
-      ? true
-      : false;
   const superTokenSymbol = "DEGENx";
   const superTokenIcon = DegenLogo;
   const underlyingTokenName = "DEGEN";
@@ -501,14 +480,10 @@ export default function EditStream(props: EditStreamProps) {
                   className="py-1 rounded-3 text-white"
                   onClick={() =>
                     setStep(
-                      !hasSufficientDegenBalance || !hasSuggestedTokenBalance
-                        ? Step.TOP_UP
-                        : wrapAmount ||
-                          superTokenBalance <
-                            BigInt(newFlowRate) *
-                              BigInt(
-                                fromTimeUnitsToSeconds(1, TimeInterval.DAY)
-                              )
+                      wrapAmount ||
+                        superTokenBalance <
+                          BigInt(newFlowRate) *
+                            BigInt(fromTimeUnitsToSeconds(1, TimeInterval.DAY))
                         ? Step.WRAP
                         : Step.REVIEW
                     )
@@ -536,7 +511,7 @@ export default function EditStream(props: EditStreamProps) {
               as="div"
               className={`d-flex justify-content-center p-0
                     ${
-                      step === Step.SELECT_AMOUNT || step === Step.TOP_UP
+                      step === Step.SELECT_AMOUNT
                         ? "bg-secondary"
                         : step === Step.WRAP
                         ? "bg-aqua"
