@@ -1,7 +1,4 @@
-import {
-  TransactionTargetResponse,
-  getFrameMessageFromRequestBody,
-} from "frames.js";
+import { TransactionTargetResponse, getFrameMessage } from "frames.js";
 import { NextRequest, NextResponse } from "next/server";
 import {
   Abi,
@@ -18,7 +15,7 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   const json = await req.json();
 
-  const frameMessage = await getFrameMessageFromRequestBody(json);
+  const frameMessage = await getFrameMessage(json);
 
   if (!frameMessage) {
     throw new Error("No frame message");
@@ -35,7 +32,13 @@ export async function POST(
   const createFlowCalldata = encodeFunctionData({
     abi: cfaForwarderAbi,
     functionName: "createFlow",
-    args: [degenxAddress, frameMessage.signer, superappAddress, flowRate, "0x"],
+    args: [
+      degenxAddress,
+      frameMessage.connectedAddress,
+      superappAddress,
+      flowRate,
+      "0x",
+    ],
   });
 
   const publicClient = createPublicClient({
@@ -44,13 +47,12 @@ export async function POST(
   });
 
   return NextResponse.json({
-    chainId: "eip155:666666666", // Degen Chain
+    chainId: "eip155:666666666",
     method: "eth_sendTransaction",
     params: {
       abi: cfaForwarderAbi as Abi,
       to: cfaForwarderAddress,
       data: createFlowCalldata,
-      value: parseEther("1").toString(),
     },
   });
 }
