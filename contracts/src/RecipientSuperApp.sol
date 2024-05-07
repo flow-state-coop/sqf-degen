@@ -17,6 +17,7 @@ import {IInstantDistributionAgreementV1} from
 
 import {StreamingQuadraticFunding} from "./StreamingQuadraticFunding.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IChecker} from "./interfaces/IChecker.sol";
 
 contract RecipientSuperApp is SuperAppBase {
     error UNAUTHORIZED();
@@ -44,13 +45,19 @@ contract RecipientSuperApp is SuperAppBase {
     address public recipient;
     StreamingQuadraticFunding public immutable streamingQuadraticFunding;
     ISuperToken public immutable acceptedToken;
+    address public immutable checker;
 
     modifier onlyRecipient() {
         _checkOnlyRecipient();
         _;
     }
 
-    constructor(address _recipient, address _streamingQuadraticFunding, address _host, ISuperToken _acceptedToken) {
+    constructor(
+        address _recipient,
+        address _streamingQuadraticFunding,
+        address _host,
+        ISuperToken _acceptedToken
+    ) {
         HOST = ISuperfluid(_host);
 
         if (address(_streamingQuadraticFunding) == address(0)) {
@@ -59,6 +66,7 @@ contract RecipientSuperApp is SuperAppBase {
         streamingQuadraticFunding = StreamingQuadraticFunding(_streamingQuadraticFunding);
         acceptedToken = _acceptedToken;
         recipient = _recipient;
+        checker = streamingQuadraticFunding.checker();
     }
 
     /// @notice Withdraw ERC20 funds in an emergency
@@ -82,6 +90,9 @@ contract RecipientSuperApp is SuperAppBase {
         internal
         returns (bytes memory newCtx)
     {
+        if (checker != address(0) && !IChecker(checker).isValidAllocator(sender)) {
+            revert UNAUTHORIZED();
+        }
         newCtx = onFlowUpdated(previousFlowRate, newFlowRate, ctx);
     }
 
