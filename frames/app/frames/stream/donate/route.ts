@@ -53,6 +53,7 @@ export async function POST(
       abi: cfaForwarderAbi as Abi,
       to: cfaForwarderAddress,
       data: createFlowCalldata,
+      value: "0",
     },
   });
 }
