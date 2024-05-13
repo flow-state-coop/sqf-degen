@@ -11,8 +11,11 @@ export const POST = frames(async (ctx) => {
       </div>
     ),
     buttons: [
-      <Button action='post' target='/'>
-        Previous frame
+      <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
+        Learn about SQF
+      </Button>,
+      <Button action='post' target={"/grantee/2345"}>
+        Check the Multiplier
       </Button>,
     ],
   };
