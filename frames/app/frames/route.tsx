@@ -18,7 +18,7 @@ const frameHandler = frames(async (ctx) => {
       <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
         SQF Round Details
       </Button>,
-      <Button action='post' target='/stream'>
+      <Button action='post' target={"/grantee"}>
         Check the Multiplier
       </Button>,
     ],
