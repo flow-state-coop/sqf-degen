@@ -3,7 +3,13 @@ import { frames } from "../../frames";
 import { NextRequest } from "next/server";
 
 export const POST = async (req: NextRequest) => {
-  const address = req.url as string;
+  const url = new URL(req.url);
+
+  const pathSegments = url.pathname.split("/");
+
+  const address = pathSegments[3];
+
+  console.log("Ethereum Address:", address);
 
   return await frames(async (ctx) => {
     console.log(address);
