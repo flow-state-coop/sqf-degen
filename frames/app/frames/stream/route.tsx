@@ -8,7 +8,6 @@ const handleRequest = frames(async (ctx) => {
       <>
         <span tw='flex flex-col px-10'>
           <h3>Streaming QF- Degen Builders Round</h3>
-          <h1>Geoweb</h1>
           <p>
             Open a $DEGEN donation stream that's matched with quadratic funding.
           </p>

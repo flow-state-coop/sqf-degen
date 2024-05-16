@@ -2,16 +2,27 @@ import { Button } from "frames.js/next";
 import { frames } from "../../../frames";
 import { NextRequest } from "next/server";
 
+interface State {
+  address: string;
+  pool: number;
+}
+
 const handler = async (req: NextRequest) => {
   const url = new URL(req.url);
 
   const pathSegments = url.pathname.split("/");
 
-  const address = pathSegments[3];
-  const pool = pathSegments[4];
+  const address = pathSegments.length > 3 ? pathSegments[3] || "" : "";
+  const poolString = pathSegments.length > 4 ? pathSegments[4] : undefined;
+
+  const pool = poolString ? parseInt(poolString, 10) : 0;
+  if (isNaN(pool)) {
+    console.error("Failed to parse pool number from URL, using default of 0");
+  }
 
   return await frames(async (ctx) => {
-    const path = `/grantee/${address}`;
+    // Since we provide empty string fallbacks, address and pool are guaranteed to be strings here.
+    const newState: State = { ...ctx.state, address, pool };
 
     return {
       image: (
@@ -35,10 +46,18 @@ const handler = async (req: NextRequest) => {
         <Button action='tx' target='/stream/wrapDegen' post_url='/stream/'>
           Wrap to DegenX
         </Button>,
-        <Button action='tx' target='/stream/donate' post_url='/stream/success'>
+        <Button
+          action='tx'
+          target={{
+            pathname: "/stream/donate",
+            query: { address: address, pool: pool },
+          }}
+          post_url='/stream/success'
+        >
           Donate
         </Button>,
       ],
+      state: newState,
     };
   })(req);
 };

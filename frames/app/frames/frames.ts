@@ -1,10 +1,11 @@
 import { createFrames } from "frames.js/next";
 
 type State = {
-  counter: number;
+  address: string;
+  pool: number;
 };
 
 export const frames = createFrames<State>({
   basePath: "/frames",
-  initialState: { counter: 0 },
+  initialState: { address: "", pool: 0 },
 });
