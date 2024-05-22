@@ -45,9 +45,7 @@ const handler = async (req: NextRequest) => {
       image: (
         <span tw='flex flex-col px-10'>
           <h3>Streaming QF- Degen Builders Round</h3>
-          <h3>
-            SQF Funding For: {address} Pool: {pool}
-          </h3>
+          <h3>SQF Funding For {queryRes.recipient.metadata.title}</h3>
           <p>
             Open a $DEGEN donation stream that's matched with quadratic funding.
           </p>
