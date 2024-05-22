@@ -2,10 +2,10 @@ import { createFrames } from "frames.js/next";
 
 type State = {
   address: string;
-  pool: number;
+  pool: string;
 };
 
 export const frames = createFrames<State>({
   basePath: "/frames",
-  initialState: { address: "", pool: 0 },
+  initialState: { address: "", pool: "" },
 });

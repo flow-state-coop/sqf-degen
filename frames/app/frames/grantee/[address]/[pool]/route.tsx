@@ -1,10 +1,16 @@
 import { Button } from "frames.js/next";
 import { frames } from "../../../frames";
 import { NextRequest } from "next/server";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+
+const apolloClient = new ApolloClient({
+  uri: "https://api.streaming.fund/graphql",
+  cache: new InMemoryCache(),
+});
 
 interface State {
   address: string;
-  pool: number;
+  pool: string;
 }
 
 const handler = async (req: NextRequest) => {
@@ -13,15 +19,26 @@ const handler = async (req: NextRequest) => {
   const pathSegments = url.pathname.split("/");
 
   const address = pathSegments.length > 3 ? pathSegments[3] || "" : "";
-  const poolString = pathSegments.length > 4 ? pathSegments[4] : undefined;
+  const pool = pathSegments.length > 4 ? pathSegments[4] || "" : "";
 
-  const pool = poolString ? parseInt(poolString, 10) : 0;
-  if (isNaN(pool)) {
-    console.error("Failed to parse pool number from URL, using default of 0");
-  }
+  const { data: queryRes } = await apolloClient.query({
+    query: gql`
+      query Recipient($pool: String!, $address: String!) {
+        recipient(id: $address, poolId: $pool, chainId: 11155420) {
+          metadata
+          superappAddress
+        }
+      }
+    `,
+    variables: {
+      pool,
+      address,
+    },
+  });
+
+  console.log(queryRes.recipient);
 
   return await frames(async (ctx) => {
-    // Since we provide empty string fallbacks, address and pool are guaranteed to be strings here.
     const newState: State = { ...ctx.state, address, pool };
 
     return {
