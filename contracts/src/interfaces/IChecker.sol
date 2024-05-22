@@ -2,5 +2,8 @@
 pragma solidity 0.8.23;
 
 interface IChecker {
-    function isValidAllocator(address _allocator) external view returns (bool);
+    function isValidAllocator(address _allocator)
+        external
+        view
+        returns (bool);
 }

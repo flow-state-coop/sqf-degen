@@ -1,12 +1,13 @@
-// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.23;
 
 // External Libraries
-import {ReentrancyGuard} from "openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
+import {ReentrancyGuard} from
+    "openzeppelin-contracts/contracts/security/ReentrancyGuard.sol";
 import {
     ISuperToken,
     ISuperfluidPool
-} from "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
+} from
+    "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {ISuperToken} from
     "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {PoolConfig} from
@@ -44,6 +45,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
     /// @notice Stores the details needed for initializing contract
     struct InitializeParams {
+        address admin;
         address superfluidHost;
         address allocationSuperToken;
         address poolSuperToken;
@@ -56,7 +58,7 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// ======== Errors ==========
     /// ==========================
 
-    /// @notice Throws when the caller is not the owner
+    /// @notice Throws when the caller is not the admin
     error UNAUTHORIZED();
 
     /// @notice Thrown as a general error when input / data is invalid
@@ -77,11 +79,21 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @param totalUnits The total units
     event TotalUnitsUpdated(address indexed recipientId, uint256 totalUnits);
 
+    /// @notice Emitted when a recipient is registered
+    /// @param recipientAddress address of the recipient
+    /// @param metadata The metadata of the recipient
+    event Registered(address indexed recipientAddress, Metadata metadata);
+
+    /// @notice Emitted when a recipient is updated
+    /// @param recipientAddress address of the recipient
+    /// @param metadata The metadata of the recipient
+    event UpdatedRegistration(address indexed recipientAddress, Metadata metadata);
+
     /// ================================
     /// ========== Storage =============
     /// ================================
 
-    address public owner;
+    address public admin;
     uint256 public initialSuperAppBalance;
     /// @dev Available at https://console.superfluid.finance/
     /// @notice The host contract for the superfluid protocol
@@ -121,20 +133,11 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
     /// @notice Modifier to check if the caller is authorized
     /// @dev This will revert if the caller is not authorized.
-    modifier onlyOwner() {
-        if (msg.sender != owner) {
+    modifier onlyAdmin() {
+        if (msg.sender != admin) {
             revert UNAUTHORIZED();
         }
         _;
-    }
-
-    /// ===============================
-    /// ======== Constructor ==========
-    /// ===============================
-
-    /// @notice Constructor
-    constructor() {
-        owner = msg.sender;
     }
 
     /// ===============================
@@ -143,18 +146,18 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
     // @notice Initialize the contract
     /// @dev This will revert if the contract is already initialized
-    /// @param _data The data to be decoded
-    function initialize(bytes memory _data) external onlyOwner {
+    function initialize(bytes memory _data) public {
+        if (admin != address(0)) {
+            revert INVALID();
+        }
+
         (InitializeParams memory params) = abi.decode(_data, (InitializeParams));
 
-        if (
-            params.superfluidHost == address(0) || params.allocationSuperToken == address(0)
-                || params.initialSuperAppBalance == 0 || address(gdaPool) != address(0)
-        ) revert INVALID();
-
+        admin = params.admin;
         checker = params.checker;
         superfluidHost = params.superfluidHost;
-        recipientSuperAppFactory = RecipientSuperAppFactory(params.recipientSuperAppFactory);
+        recipientSuperAppFactory =
+            RecipientSuperAppFactory(params.recipientSuperAppFactory);
         allocationSuperToken = ISuperToken(params.allocationSuperToken);
         poolSuperToken = ISuperToken(params.poolSuperToken);
         initialSuperAppBalance = params.initialSuperAppBalance;
@@ -179,10 +182,10 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice Register Recipient to the pool
     /// @param _recipientAddress The data to be decoded
     /// @param _metadata The metadata of the recipient
-    function registerRecipient(address _recipientAddress, Metadata memory _metadata)
-        external
-        onlyOwner
-    {
+    function registerRecipient(
+        address _recipientAddress,
+        Metadata memory _metadata
+    ) external onlyAdmin {
         if ((bytes(_metadata.pointer).length == 0 || _metadata.protocol == 0)) {
             revert INVALID_METADATA();
         }
@@ -197,7 +200,8 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
         recipient.metadata = _metadata;
 
         if (superApps[_recipientAddress] == address(0)) {
-            RecipientSuperApp superApp = recipientSuperAppFactory.createRecipientSuperApp(
+            RecipientSuperApp superApp = recipientSuperAppFactory
+                .createRecipientSuperApp(
                 recipient.recipientAddress,
                 address(this),
                 superfluidHost,
@@ -207,13 +211,19 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
                 true
             );
 
-            allocationSuperToken.transfer(address(superApp), initialSuperAppBalance);
+            allocationSuperToken.transfer(
+                address(superApp), initialSuperAppBalance
+            );
 
             // Add recipientAddress as member of the GDA with 1 unit
             _updateMemberUnits(_recipientAddress, recipient.recipientAddress, 1);
 
             superApps[address(superApp)] = _recipientAddress;
             recipient.superApp = superApp;
+
+            emit Registered(_recipientAddress, _metadata);
+        } else {
+            emit UpdatedRegistration(_recipientAddress, _metadata);
         }
     }
 
@@ -221,7 +231,9 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @dev This can only be called by the super app callback onFlowUpdated
     /// @param _previousFlowRate The previous flow rate
     /// @param _newFlowRate The new flow rate
-    function adjustWeightings(uint256 _previousFlowRate, uint256 _newFlowRate) external {
+    function adjustWeightings(uint256 _previousFlowRate, uint256 _newFlowRate)
+        external
+    {
         address recipientId = superApps[msg.sender];
 
         if (recipientId == address(0)) revert UNAUTHORIZED();
@@ -233,15 +245,16 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
             uint256 scaledFlowRate = _newFlowRate / 1e6;
 
             if (scaledFlowRate > 0) {
-                recipientTotalUnits = (recipientTotalUnits.sqrt() + scaledFlowRate.sqrt()) ** 2;
+                recipientTotalUnits =
+                    (recipientTotalUnits.sqrt() + scaledFlowRate.sqrt()) ** 2;
             }
         } else if (_newFlowRate == 0) {
             // canceled a flow
             uint256 scaledFlowRate = _previousFlowRate / 1e6;
 
             if (scaledFlowRate > 0) {
-                recipientTotalUnits =
-                    recipientTotalUnits + scaledFlowRate - 2 * uint256(recipientTotalUnits * scaledFlowRate).sqrt();
+                recipientTotalUnits = recipientTotalUnits + scaledFlowRate
+                    - 2 * uint256(recipientTotalUnits * scaledFlowRate).sqrt();
             }
         } else {
             // updated a flow
@@ -250,24 +263,35 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
 
             if (scaledNewFlowRate != scaledPreviousFlowRate) {
                 if (scaledNewFlowRate > 0) {
-                    recipientTotalUnits =
-                        (recipientTotalUnits.sqrt() + scaledNewFlowRate.sqrt() - scaledPreviousFlowRate.sqrt()) ** 2;
+                    recipientTotalUnits = (
+                        recipientTotalUnits.sqrt() + scaledNewFlowRate.sqrt()
+                            - scaledPreviousFlowRate.sqrt()
+                    ) ** 2;
                 } else if (scaledPreviousFlowRate > 0) {
-                    recipientTotalUnits = recipientTotalUnits + scaledPreviousFlowRate
-                        - 2 * uint256(recipientTotalUnits * scaledPreviousFlowRate).sqrt();
+                    recipientTotalUnits = recipientTotalUnits
+                        + scaledPreviousFlowRate
+                        - 2
+                            * uint256(recipientTotalUnits * scaledPreviousFlowRate).sqrt(
+                            );
                 }
             }
         }
 
-        recipientTotalUnits = recipientTotalUnits > 1e5 ? recipientTotalUnits / 1e5 : 1;
+        recipientTotalUnits =
+            recipientTotalUnits > 1e5 ? recipientTotalUnits / 1e5 : 1;
 
         Recipient storage recipient = recipients[recipientId];
 
-        _updateMemberUnits(recipientId, recipient.recipientAddress, uint128(recipientTotalUnits));
+        _updateMemberUnits(
+            recipientId,
+            recipient.recipientAddress,
+            uint128(recipientTotalUnits)
+        );
 
         uint256 currentFlowRate = recipientFlowRate[recipientId];
 
-        recipientFlowRate[recipientId] = currentFlowRate + _newFlowRate - _previousFlowRate;
+        recipientFlowRate[recipientId] =
+            currentFlowRate + _newFlowRate - _previousFlowRate;
 
         emit TotalUnitsUpdated(recipientId, recipientTotalUnits);
     }
@@ -279,21 +303,33 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice Get the recipient
     /// @param _recipientId ID of the recipient
     /// @return The recipient
-    function getRecipient(address _recipientId) external view returns (Recipient memory) {
+    function getRecipient(address _recipientId)
+        external
+        view
+        returns (Recipient memory)
+    {
         return _getRecipient(_recipientId);
     }
 
     /// @notice Get the recipientId of a super app
     /// @param _superApp The super app
     /// @return The recipientId
-    function getRecipientId(address _superApp) external view returns (address) {
+    function getRecipientId(address _superApp)
+        external
+        view
+        returns (address)
+    {
         return superApps[_superApp];
     }
 
     /// @notice Get the super app of a recipient
     /// @param _recipientId The ID of the recipient
     /// @return The super app
-    function getSuperApp(address _recipientId) external view returns (RecipientSuperApp) {
+    function getSuperApp(address _recipientId)
+        external
+        view
+        returns (RecipientSuperApp)
+    {
         return recipients[_recipientId].superApp;
     }
 
@@ -304,7 +340,11 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @notice Getter for a recipient using the ID
     /// @param _recipientId ID of the recipient
     /// @return The recipient
-    function _getRecipient(address _recipientId) internal view returns (Recipient memory) {
+    function _getRecipient(address _recipientId)
+        internal
+        view
+        returns (Recipient memory)
+    {
         return recipients[_recipientId];
     }
 
@@ -312,7 +352,11 @@ contract StreamingQuadraticFunding is ReentrancyGuard {
     /// @param _recipientId ID of the recipient
     /// @param _recipientAddress Address of the recipient
     /// @param _units The units
-    function _updateMemberUnits(address _recipientId, address _recipientAddress, uint128 _units) internal {
+    function _updateMemberUnits(
+        address _recipientId,
+        address _recipientAddress,
+        uint128 _units
+    ) internal {
         gdaPool.updateMemberUnits(_recipientAddress, _units);
         totalUnitsByRecipient[_recipientId] = _units;
         emit TotalUnitsUpdated(_recipientId, _units);

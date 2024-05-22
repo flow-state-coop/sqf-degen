@@ -7,7 +7,8 @@ import {
     ISuperApp,
     SuperAppDefinitions,
     ISuperToken
-} from "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
+} from
+    "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {SuperAppBase} from
     "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/apps/SuperAppBase.sol";
 import {SuperTokenV1Library} from
@@ -24,7 +25,8 @@ contract RecipientSuperApp is SuperAppBase {
 
     using SuperTokenV1Library for ISuperToken;
 
-    bytes32 public constant CFAV1_TYPE = keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1");
+    bytes32 public constant CFAV1_TYPE =
+        keccak256("org.superfluid-finance.agreements.ConstantFlowAgreement.v1");
 
     ISuperfluid public immutable HOST;
 
@@ -63,7 +65,8 @@ contract RecipientSuperApp is SuperAppBase {
         if (address(_streamingQuadraticFunding) == address(0)) {
             revert ZERO_ADDRESS();
         }
-        streamingQuadraticFunding = StreamingQuadraticFunding(_streamingQuadraticFunding);
+        streamingQuadraticFunding =
+            StreamingQuadraticFunding(_streamingQuadraticFunding);
         acceptedToken = _acceptedToken;
         recipient = _recipient;
         checker = streamingQuadraticFunding.checker();
@@ -71,7 +74,9 @@ contract RecipientSuperApp is SuperAppBase {
 
     /// @notice Withdraw ERC20 funds in an emergency
     function emergencyWithdraw(address token) external onlyRecipient {
-        IERC20(token).transfer(msg.sender, IERC20(token).balanceOf(address(this)));
+        IERC20(token).transfer(
+            msg.sender, IERC20(token).balanceOf(address(this))
+        );
     }
 
     /// @notice Close incoming streams in an emergency
@@ -80,17 +85,26 @@ contract RecipientSuperApp is SuperAppBase {
     }
 
     /// @dev Accepts all super tokens
-    function isAcceptedSuperToken(ISuperToken _superToken) public view virtual returns (bool) {
+    function isAcceptedSuperToken(ISuperToken _superToken)
+        public
+        view
+        virtual
+        returns (bool)
+    {
         return address(_superToken) == address(acceptedToken);
     }
 
     /// @notice This is the main callback function called by the host
     ///      to notify the app about the callback context.
-    function onFlowCreated(int96 previousFlowRate, int96 newFlowRate, address sender, bytes calldata ctx)
-        internal
-        returns (bytes memory newCtx)
-    {
-        if (checker != address(0) && !IChecker(checker).isValidAllocator(sender)) {
+    function onFlowCreated(
+        int96 previousFlowRate,
+        int96 newFlowRate,
+        address sender,
+        bytes calldata ctx
+    ) internal returns (bytes memory newCtx) {
+        if (
+            checker != address(0) && !IChecker(checker).isValidAllocator(sender)
+        ) {
             revert UNAUTHORIZED();
         }
         newCtx = onFlowUpdated(previousFlowRate, newFlowRate, ctx);
@@ -98,11 +112,14 @@ contract RecipientSuperApp is SuperAppBase {
 
     /// @notice This is the main callback function called by the host
     ///      to notify the app about the callback context.
-    function onFlowUpdated(int96 previousFlowRate, int96 newFlowRate, bytes calldata ctx)
-        internal
-        returns (bytes memory newCtx)
-    {
-        streamingQuadraticFunding.adjustWeightings(uint256(int256(previousFlowRate)), uint256(int256(newFlowRate)));
+    function onFlowUpdated(
+        int96 previousFlowRate,
+        int96 newFlowRate,
+        bytes calldata ctx
+    ) internal returns (bytes memory newCtx) {
+        streamingQuadraticFunding.adjustWeightings(
+            uint256(int256(previousFlowRate)), uint256(int256(newFlowRate))
+        );
         newCtx = _updateOutflow(ctx);
     }
 
@@ -118,7 +135,10 @@ contract RecipientSuperApp is SuperAppBase {
     }
 
     // https://Ihub.com/superfluid-finance/super-examples/blob/main/projects/tradeable-cashflow/contracts/RedirectAll.sol#L163
-    function _updateOutflow(bytes memory ctx) private returns (bytes memory newCtx) {
+    function _updateOutflow(bytes memory ctx)
+        private
+        returns (bytes memory newCtx)
+    {
         newCtx = ctx;
 
         int96 netFlowRate = acceptedToken.getNetFlowRate(address(this));
@@ -129,7 +149,8 @@ contract RecipientSuperApp is SuperAppBase {
 
         if (inFlowRate == 0) {
             // The flow does exist and should be deleted.
-            newCtx = acceptedToken.deleteFlowWithCtx(address(this), recipient, ctx);
+            newCtx =
+                acceptedToken.deleteFlowWithCtx(address(this), recipient, ctx);
         } else if (outFlowRate != 0) {
             // The flow does exist and needs to be updated.
             newCtx = acceptedToken.updateFlowWithCtx(recipient, inFlowRate, ctx);
@@ -139,9 +160,14 @@ contract RecipientSuperApp is SuperAppBase {
         }
     }
 
-    function _createCbData(bytes calldata _agreementData) internal view returns (bytes memory) {
+    function _createCbData(bytes calldata _agreementData)
+        internal
+        view
+        returns (bytes memory)
+    {
         (address sender,) = abi.decode(_agreementData, (address, address));
-        (uint256 lastUpdated, int96 flowRate,,) = acceptedToken.getFlowInfo(sender, address(this));
+        (uint256 lastUpdated, int96 flowRate,,) =
+            acceptedToken.getFlowInfo(sender, address(this));
 
         return abi.encode(flowRate, lastUpdated);
     }
@@ -232,7 +258,10 @@ contract RecipientSuperApp is SuperAppBase {
         bytes calldata agreementData,
         bytes calldata /*ctx*/
     ) external view override returns (bytes memory /*beforeData*/ ) {
-        if (msg.sender != address(HOST) || !isAcceptedAgreement(agreementClass) || !isAcceptedSuperToken(superToken)) {
+        if (
+            msg.sender != address(HOST) || !isAcceptedAgreement(agreementClass)
+                || !isAcceptedSuperToken(superToken)
+        ) {
             return "0x";
         }
 
@@ -247,7 +276,10 @@ contract RecipientSuperApp is SuperAppBase {
         bytes calldata cbdata,
         bytes calldata ctx
     ) external override returns (bytes memory) {
-        if (msg.sender != address(HOST) || !isAcceptedAgreement(agreementClass) || !isAcceptedSuperToken(superToken)) {
+        if (
+            msg.sender != address(HOST) || !isAcceptedAgreement(agreementClass)
+                || !isAcceptedSuperToken(superToken)
+        ) {
             return ctx;
         }
 
@@ -264,7 +296,12 @@ contract RecipientSuperApp is SuperAppBase {
      *      This function can be overridden with custom logic and to revert if desired
      *      Current implementation expects ConstantFlowAgreement
      */
-    function isAcceptedAgreement(address agreementClass) internal view virtual returns (bool) {
+    function isAcceptedAgreement(address agreementClass)
+        internal
+        view
+        virtual
+        returns (bool)
+    {
         return agreementClass == address(HOST.getAgreementClass(CFAV1_TYPE));
     }
 }

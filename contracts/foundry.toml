@@ -7,6 +7,13 @@ broadcast = 'broadcast'
 cache_path = 'cache'
 optimizer = true
 optimizer-runs = 1_000
+ffi = true
+ast = true
+build_info = true
+extra_output = ["storageLayout"]
 
 [rpc_endpoints]
 degen = "${DEGEN_RPC_URL}"
+
+[fmt]
+line_length = 80

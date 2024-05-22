@@ -11,8 +11,12 @@
 </thead>
 <tbody>
     <tr>
-        <td>StreamingQuadraticFunding</td>
-        <td>0x533ed7bC8d5924d41D8b3a0ff0B45deAf2C7092d</td>
+        <td>PoolFactory Proxy</td>
+        <td>0xcB15aE6b8C1c0A868c9c6494C49D65eFce23313A</td>
+    </tr>
+    <tr>
+        <td>PoolFactory Implementation</td>
+        <td>0x0C323adb863485856369c1baAc38E26B0E1E9564</td>
     </tr>
     <tr>
         <td>RecipientSuperAppFactory</td>

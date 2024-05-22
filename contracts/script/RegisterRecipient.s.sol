@@ -5,7 +5,6 @@ import {Script, console2} from "forge-std/Script.sol";
 import {ISuperToken} from
     "../lib/superfluid-protocol-monorepo/packages/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
 import {StreamingQuadraticFunding} from "../src/StreamingQuadraticFunding.sol";
-import {RecipientSuperAppFactory} from "../src/RecipientSuperAppFactory.sol";
 
 contract RegisterRecipient is Script {
     function run() public {
@@ -13,13 +12,14 @@ contract RegisterRecipient is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         StreamingQuadraticFunding streamingQuadraticFunding =
-            StreamingQuadraticFunding(0x533ed7bC8d5924d41D8b3a0ff0B45deAf2C7092d);
-        ISuperToken superToken = ISuperToken(0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad);
-        address recipientAddress = 0x0000000000000000000000000000000000000000;
+        StreamingQuadraticFunding(0xb2e43BaC91497020C2BCfF0d3658C1A0884771e5);
+        ISuperToken superToken =
+            ISuperToken(0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad);
+        address recipientAddress = address(0);
 
         superToken.transfer(address(streamingQuadraticFunding), 1e8);
         streamingQuadraticFunding.registerRecipient(
-            recipientAddress, StreamingQuadraticFunding.Metadata(1, "ipfs://")
+            recipientAddress, StreamingQuadraticFunding.Metadata(1, "")
         );
 
         vm.stopBroadcast();

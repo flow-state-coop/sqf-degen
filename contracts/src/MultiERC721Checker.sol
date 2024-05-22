@@ -14,7 +14,12 @@ contract MultiERC721Checker is IChecker {
         }
     }
 
-    function isValidAllocator(address _allocator) external view override returns (bool) {
+    function isValidAllocator(address _allocator)
+        external
+        view
+        override
+        returns (bool)
+    {
         for (uint256 i = 0; i < erc721s.length; i++) {
             if (erc721s[i].balanceOf(_allocator) > 0) {
                 return true;

@@ -2,14 +2,15 @@
 pragma solidity ^0.8.13;
 
 import {Script, console2} from "forge-std/Script.sol";
-import {StreamingQuadraticFunding} from "../src/StreamingQuadraticFunding.sol";
+import {RecipientSuperAppFactory} from "../src/RecipientSuperAppFactory.sol";
+import {PoolFactory} from "../src/PoolFactory.sol";
 
-contract DeployStreamingQuadraticFunding is Script {
+contract DeployPoolFactoryImpl is Script {
     function run() public {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        new StreamingQuadraticFunding();
+        new PoolFactory();
 
         vm.stopBroadcast();
     }
