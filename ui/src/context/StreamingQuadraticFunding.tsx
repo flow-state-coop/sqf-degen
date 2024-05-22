@@ -1,12 +1,13 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import { Address } from "viem";
 import { usePublicClient } from "wagmi";
+import { createVerifiedFetch } from "@helia/verified-fetch";
 import { recipientIds } from "../lib/recipientIds";
 import { streamingQuadraticFundingAbi } from "../lib/abi/streamingQuadraticFunding";
-import { getGatewayUrl } from "../lib/utils";
 import {
   STREAMING_QUADRATIC_FUNDING_ADDRESS,
   GDA_POOL_ADDRESS,
+  IPFS_GATEWAYS,
 } from "../lib/constants";
 
 export type Recipient = {
@@ -94,16 +95,23 @@ export function StreamingQuadraticFundingContextProvider({
 
         if (pointer) {
           try {
-            const detailsRes = await fetch(getGatewayUrl(pointer));
-            const { name, description, image, website, social } =
+            const verifiedFetch = await createVerifiedFetch({
+              gateways: IPFS_GATEWAYS,
+            });
+            const detailsRes = await verifiedFetch(`ipfs://${pointer}`);
+
+            const { title, description, logoImg, website, projectTwitter } =
               await detailsRes.json();
 
+            const imageRes = await verifiedFetch(`ipfs://${logoImg}`);
+            const imageBlob = await imageRes.blob();
+
             recipientsDetails.push({
-              name,
+              name: title,
               description,
-              image: getGatewayUrl(image),
+              image: URL.createObjectURL(imageBlob),
               website,
-              social,
+              social: `https://twitter.com/${projectTwitter}`,
             });
           } catch (err) {
             recipientsDetails.push(emptyRecipientDetails);

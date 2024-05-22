@@ -37,10 +37,6 @@ export function getRandomNumberInRange(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
-export function getGatewayUrl(uri: string) {
-  return uri.startsWith("ipfs://") ? `${IPFS_GATEWAY}/${uri.slice(7)}` : uri;
-}
-
 export function perSecondToPerMonth(amount: number) {
   return amount * 2628000;
 }

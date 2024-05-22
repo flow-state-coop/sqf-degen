@@ -19,3 +19,13 @@ export const MS_PER_SECOND = 1000;
 export const VIZ_ANIMATION_DURATION = MS_PER_SECOND * 3;
 export const VIZ_CARD_WIDTH_SOURCE = 230;
 export const VIZ_CARD_WIDTH_GRANTEE = 290;
+export const IPFS_GATEWAYS = [
+  "https://gateway.pinata.cloud",
+  "https://storry.tv",
+  "https://4everland.io",
+  "https://cf-ipfs.com",
+  "https://ipfs.runfission.com",
+  "https://w3s.link",
+  "https://dweb.link",
+  "https://trustless-gateway.link",
+];
