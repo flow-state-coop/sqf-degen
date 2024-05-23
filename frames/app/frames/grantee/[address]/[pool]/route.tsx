@@ -52,7 +52,7 @@ const handler = async (req: NextRequest) => {
           </p>
         </span>
       ),
-      textInput: "Amount of DEGEN to donate",
+      textInput: "Monthly Value (Requires $DEGENx)",
       buttons: [
         <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
           SQF Round Details
