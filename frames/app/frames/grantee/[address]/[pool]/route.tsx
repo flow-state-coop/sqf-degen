@@ -39,8 +39,6 @@ const handler = async (req: NextRequest) => {
   console.log(queryRes.recipient);
 
   return await frames(async (ctx) => {
-    const newState: State = { ...ctx.state, address, pool };
-
     return {
       image: (
         <span tw='flex flex-col px-10'>
@@ -54,6 +52,7 @@ const handler = async (req: NextRequest) => {
           </p>
         </span>
       ),
+      textInput: "Amount of DEGEN to donate",
       buttons: [
         <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
           SQF Round Details
@@ -65,14 +64,17 @@ const handler = async (req: NextRequest) => {
           action='tx'
           target={{
             pathname: "/stream/donate",
-            query: { address: address, pool: pool },
+            query: {
+              address: address,
+              pool: pool,
+              amount: ctx.message?.inputText,
+            },
           }}
           post_url='/stream/success'
         >
           Donate
         </Button>,
       ],
-      state: newState,
     };
   })(req);
 };
