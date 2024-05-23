@@ -8,11 +8,6 @@ const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-interface State {
-  address: string;
-  pool: string;
-}
-
 const handler = async (req: NextRequest) => {
   const url = new URL(req.url);
 
@@ -36,14 +31,13 @@ const handler = async (req: NextRequest) => {
     },
   });
 
-  console.log(queryRes.recipient);
-
+  // console.log(queryRes.recipient);
   return await frames(async (ctx) => {
     return {
       image: (
         <span tw='flex flex-col px-10'>
           <h3>Streaming QF- Degen Builders Round</h3>
-          <h3>SQF Funding For {queryRes.recipient.metadata.title}</h3>
+          <h3>{queryRes.recipient.metadata.title}</h3>
           <p>
             Open a $DEGEN donation stream that's matched with quadratic funding.
           </p>
@@ -72,9 +66,10 @@ const handler = async (req: NextRequest) => {
           }}
           post_url='/stream/success'
         >
-          Donate
+          Create Stream
         </Button>,
       ],
+      state: { address, pool, amount: ctx.message?.inputText || "" },
     };
   })(req);
 };
