@@ -11,6 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.4",
     "@vercel/kv": "^1.0.1",
     "@xmtp/frames-validator": "^0.5.0",
     "clsx": "^2.1.0",
