@@ -51,7 +51,18 @@ const handler = async (req: NextRequest) => {
         <Button action='link' target={`https://sqf-degen-ui.vercel.app/`}>
           SQF Round Details
         </Button>,
-        <Button action='tx' target='/stream/wrapDegen' post_url='/stream/'>
+        <Button
+          action='tx'
+          target={{
+            pathname: "/stream/wrapDegen",
+            query: {
+              address: address,
+              pool: pool,
+              amount: ctx.message?.inputText,
+            },
+          }}
+          post_url='/stream/'
+        >
           Wrap to DegenX
         </Button>,
         <Button

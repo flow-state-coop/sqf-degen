@@ -20,6 +20,11 @@ export async function POST(
 
   const frameMessage = await getFrameMessageFromRequestBody(json);
 
+  const { searchParams } = new URL(req.url);
+  const address = searchParams.get("address");
+  const pool = searchParams.get("pool");
+  const amount = searchParams.get("amount") ?? "1";
+
   if (!frameMessage) {
     throw new Error("No frame message");
   }
@@ -42,7 +47,7 @@ export async function POST(
       abi: superTokenAbi as Abi,
       to: degenxAddress,
       data: wrapCalldata,
-      value: parseEther("1").toString(),
+      value: parseEther(amount).toString(),
     },
   });
 }
