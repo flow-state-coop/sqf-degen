@@ -1,5 +1,6 @@
 import {
   TransactionTargetResponse,
+  getFrameMessage,
   getFrameMessageFromRequestBody,
 } from "frames.js";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,13 +19,8 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   const json = await req.json();
 
-  const frameMessage = await getFrameMessageFromRequestBody(json);
-
-  const { searchParams } = new URL(req.url);
-  // const address = searchParams.get("address");
-  // const pool = searchParams.get("pool");
-  const amount = searchParams.get("amount") ?? "1";
-  // console.log("Amount to wrap", amount);
+  const frameMessage = await getFrameMessage(json);
+  const amount = frameMessage?.inputText ?? "1";
 
   if (!frameMessage) {
     throw new Error("No frame message");

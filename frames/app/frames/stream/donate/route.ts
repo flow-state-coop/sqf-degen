@@ -17,13 +17,13 @@ const handler = async (req: NextRequest, res: NextResponse) => {
 
   const address = searchParams.get("address");
   const pool = searchParams.get("pool");
-  const amount = searchParams.get("amount") ?? "1";
+  const amount = frameMessage?.inputText ?? "1";
   const SECONDS_IN_MONTH = BigInt(2628000);
 
   const cfaForwarderAddress = "0xcfA132E353cB4E398080B9700609bb008eceB125";
   const degenxAddress = "0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad";
   const monthlyFlowRate = parseEther(amount);
-  const flowRate = monthlyFlowRate / SECONDS_IN_MONTH; // 380517503805 wei per second
+  const flowRate = monthlyFlowRate / SECONDS_IN_MONTH;
 
   const createFlowCalldata = encodeFunctionData({
     abi: cfaForwarderAbi,

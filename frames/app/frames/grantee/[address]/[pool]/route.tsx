@@ -55,11 +55,6 @@ const handler = async (req: NextRequest) => {
           action='tx'
           target={{
             pathname: "/stream/wrapDegen",
-            query: {
-              address: address,
-              pool: pool,
-              amount: ctx.message?.inputText,
-            },
           }}
           post_url={`/grantee/` + address + "/" + pool}
         >
@@ -72,7 +67,6 @@ const handler = async (req: NextRequest) => {
             query: {
               address: address,
               pool: pool,
-              amount: ctx.message?.inputText,
             },
           }}
           post_url='/stream/success'
