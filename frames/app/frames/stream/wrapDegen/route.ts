@@ -21,9 +21,10 @@ export async function POST(
   const frameMessage = await getFrameMessageFromRequestBody(json);
 
   const { searchParams } = new URL(req.url);
-  const address = searchParams.get("address");
-  const pool = searchParams.get("pool");
+  // const address = searchParams.get("address");
+  // const pool = searchParams.get("pool");
   const amount = searchParams.get("amount") ?? "1";
+  // console.log("Amount to wrap", amount);
 
   if (!frameMessage) {
     throw new Error("No frame message");

@@ -61,7 +61,7 @@ const handler = async (req: NextRequest) => {
               amount: ctx.message?.inputText,
             },
           }}
-          post_url='/stream/'
+          post_url={`/grantee/` + address + "/" + pool}
         >
           Wrap to DegenX
         </Button>,
