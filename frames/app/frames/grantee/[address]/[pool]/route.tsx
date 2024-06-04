@@ -19,7 +19,7 @@ const handler = async (req: NextRequest) => {
   const { data: queryRes } = await apolloClient.query({
     query: gql`
       query Recipient($pool: String!, $address: String!) {
-        recipient(id: $address, poolId: $pool, chainId: 11155420) {
+        recipient(id: $address, poolId: $pool, chainId: 666666666) {
           metadata
           superappAddress
         }
