@@ -1,5 +1,6 @@
 import {
   TransactionTargetResponse,
+  getFrameMessage,
   getFrameMessageFromRequestBody,
 } from "frames.js";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,7 +19,8 @@ export async function POST(
 ): Promise<NextResponse<TransactionTargetResponse>> {
   const json = await req.json();
 
-  const frameMessage = await getFrameMessageFromRequestBody(json);
+  const frameMessage = await getFrameMessage(json);
+  const amount = frameMessage?.inputText ?? "1";
 
   if (!frameMessage) {
     throw new Error("No frame message");
@@ -42,7 +44,7 @@ export async function POST(
       abi: superTokenAbi as Abi,
       to: degenxAddress,
       data: wrapCalldata,
-      value: parseEther("1").toString(),
+      value: parseEther(amount).toString(),
     },
   });
 }

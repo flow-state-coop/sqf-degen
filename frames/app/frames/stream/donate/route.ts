@@ -7,27 +7,23 @@ import {
   http,
   parseEther,
 } from "viem";
-import { degen } from "viem/chains";
 import { cfaForwarderAbi } from "../../../lib/abi/cfaForwarder";
 
-export async function POST(
-  req: NextRequest
-): Promise<NextResponse<TransactionTargetResponse>> {
+const handler = async (req: NextRequest, res: NextResponse) => {
   const json = await req.json();
 
   const frameMessage = await getFrameMessage(json);
+  const { searchParams } = new URL(req.url);
 
-  if (!frameMessage) {
-    throw new Error("No frame message");
-  }
-
+  const address = searchParams.get("address");
+  const pool = searchParams.get("pool");
+  const amount = frameMessage?.inputText ?? "1";
   const SECONDS_IN_MONTH = BigInt(2628000);
 
   const cfaForwarderAddress = "0xcfA132E353cB4E398080B9700609bb008eceB125";
-  const superappAddress = "0x5D256D8280Df9630BfEC7f4882659a8e1E809C6a";
   const degenxAddress = "0xda58FA9bfc3D3960df33ddD8D4d762Cf8Fa6F7ad";
-  const monthlyFlowRate = parseEther("1"); // 1 DEGENx per month
-  const flowRate = monthlyFlowRate / SECONDS_IN_MONTH; // 380517503805 wei per second
+  const monthlyFlowRate = parseEther(amount);
+  const flowRate = monthlyFlowRate / SECONDS_IN_MONTH;
 
   const createFlowCalldata = encodeFunctionData({
     abi: cfaForwarderAbi,
@@ -35,15 +31,10 @@ export async function POST(
     args: [
       degenxAddress,
       frameMessage.connectedAddress,
-      superappAddress,
+      address,
       flowRate,
       "0x",
     ],
-  });
-
-  const publicClient = createPublicClient({
-    chain: degen,
-    transport: http("https://rpc.degen.tips"),
   });
 
   return NextResponse.json({
@@ -56,4 +47,7 @@ export async function POST(
       value: "0",
     },
   });
-}
+};
+
+export const POST = handler;
+export const GET = handler;
